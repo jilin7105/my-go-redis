@@ -58,6 +58,17 @@ func NoMatch(cmd_arr []string) (string , error) {
 	return "",fmt.Errorf("没有找到该命令NoMatch" + cmd_arr[0])
 }
 
+
+//查询当前状态
+func Info(cmd_arr []string) (string , error) {
+	info, err := MemoryManagement.Info()
+	if err != nil {
+		return "", err
+	}
+	return info ,nil
+}
+
+
 /**
  * @Author yuyunqing
  * @Description //简单验证所需参数

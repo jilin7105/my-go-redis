@@ -59,6 +59,7 @@ func GetActionFunc(cmd_type string) ( Cmd_fun,error) {
 		"get" : {Get,1 , "RString" },
 		"set" : {Set,2 , "RString" },
 		"nomatch" : {NoMatch,0 , "all" },
+		"info" : {Info,0 , "all" },
 	}
 	if _,ok := funcs[cmd_type] ;ok {
 		return funcs[cmd_type] ,nil

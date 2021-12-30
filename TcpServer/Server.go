@@ -9,6 +9,7 @@ package TcpServer
 import (
 	"bufio"
 	"go-redis/Cmd"
+	"go-redis/TcpHelp"
 	"go-redis/commonSTR"
 	"io"
 	"log"
@@ -30,7 +31,7 @@ func process(conn net.Conn)  {
 	reader := bufio.NewReader(conn)
 	//判断当前链接数
 	if conn_num >= max_conn_count {
-		err := Write(commonSTR.CONN_MORE_THAN_MAX, conn)
+		err := TcpHelp.Write(commonSTR.CONN_MORE_THAN_MAX, conn)
 		if err != nil {
 			log.Println("写数据异常" , err)
 			return
@@ -45,14 +46,14 @@ func process(conn net.Conn)  {
 	//保持tcp链接
 	for  {
 
-		str, err := Read(ip.String(), reader)
+		str, err := TcpHelp.Read(ip.String(), reader)
 		if err == io.EOF {
 			return
 		}
 
 		if err != nil {
 			log.Println("获取输入异常 " ,err)
-			Write(commonSTR.NO_REQ, conn)
+			TcpHelp.Write(commonSTR.NO_REQ, conn)
 			continue
 		}
 
@@ -60,11 +61,11 @@ func process(conn net.Conn)  {
 		res, err := Cmd.CmdAction(str)
 		if err != nil {
 			log.Println("执行指令异常",err.Error())
-			Write(err.Error(), conn)
+			TcpHelp.Write(err.Error(), conn)
 			continue
 		}
 
-		Write(res, conn)
+		TcpHelp.Write(res, conn)
 	}
 }
 

@@ -8,7 +8,7 @@ package main
 
 import (
 	"bufio"
-	"io"
+	"go-redis/TcpHelp"
 	"log"
 	"net"
 	"os"
@@ -30,20 +30,14 @@ func main()  {
 		}
 
 		send := strings.Trim(msg, "\r\n")
-		tcp.Write([]byte(send))
+		//发送命令
+		TcpHelp.Write(send, tcp)
 
-		var p [200]byte
-		reder := bufio.NewReader(tcp)
-		read, err := reder.Read(p[:])
-		if err == io.EOF{
-			log.Println("服务端退出")
-			return
-		}
+		reader := bufio.NewReader(tcp)
+		read, err := TcpHelp.Read("127.0.0.1:20001", reader)
 		if err != nil {
-			log.Println("读取失败",err)
 			return
 		}
-
-		log.Println(string(p[:read]))
+		log.Println("来自服务端消息127.0.0.1:20001>", read)
 	}
 }
