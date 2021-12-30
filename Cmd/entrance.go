@@ -8,6 +8,7 @@ package Cmd
 
 import (
 	"fmt"
+	"go-redis/FileAction"
 	"log"
 	"strings"
 )
@@ -28,6 +29,7 @@ func CmdAction(cmd_input string) (string ,error) {
 	}
 	log.Println(cmd_arr)
 	//获取返回
+	FileAction.SaveToFile(strings.Join(cmd_arr,"|"))
 	actionFunc, err := GetActionFunc(cmd_arr[0])
 	if err != nil {
 		return "", err
