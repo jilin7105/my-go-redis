@@ -8,8 +8,9 @@ package Cmd
 
 import (
 	"fmt"
-	"go-redis/DataStructure/RString"
+	"go-redis/DataStructure/rstring"
 	"go-redis/MemoryManagement"
+	"go-redis/RDB"
 	"log"
 	"strconv"
 )
@@ -66,6 +67,11 @@ func Info(cmd_arr []string) (string , error) {
 		return "", err
 	}
 	return info ,nil
+}
+
+func Rdb(cmd_arr []string) (string , error)  {
+	RDB.SaveToRdb()
+	return "rdb被执行",nil
 }
 
 

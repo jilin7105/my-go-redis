@@ -32,9 +32,8 @@ func GetMainInfo() *BaseDataInMemory {
 
 func InitData() string {
 	GetMainInfo()
-
 	//获取基础信息
-	return commonSTR.INIT_SERUCCESS
+	return commonSTR.INIT_DATA_SERUCCESS
 }
 
 

@@ -18,10 +18,11 @@ type Cmd_fun struct {
 	Funcs func(cmd_arr []string)(string , error) //指定方法
 	Func_num int //方法对应的参数数量
 	Data_type string //操作数据类型
+	AOFSave bool
 }
 
 //执行tcp指令入口类似     GET  info  // set info 1
-func CmdAction(cmd_input string) (string ,error) {
+func CmdAction(cmd_input string , is_saof bool) (string ,error) {
 	//根据空格拆分字符串
 	cmd_arr := strings.Split(cmd_input," ")
 	if len(cmd_arr) == 0  {
@@ -29,7 +30,7 @@ func CmdAction(cmd_input string) (string ,error) {
 	}
 	log.Println(cmd_arr)
 	//获取返回
-	FileAction.SaveToFile(strings.Join(cmd_arr,"|"))
+
 	actionFunc, err := GetActionFunc(cmd_arr[0])
 	if err != nil {
 		return "", err
@@ -47,6 +48,11 @@ func CmdAction(cmd_input string) (string ,error) {
 	if err != nil {
 		return "", err
 	}
+
+	//aof判断
+	if actionFunc.AOFSave && is_saof {
+		FileAction.SaveToFile(strings.Join(cmd_arr,"|"),"aof")
+	}
 	return res ,nil
 }
 
@@ -58,10 +64,11 @@ func CmdAction(cmd_input string) (string ,error) {
  **/
 func GetActionFunc(cmd_type string) ( Cmd_fun,error) {
 	funcs := map[string]Cmd_fun{
-		"get" : {Get,1 , "RString" },
-		"set" : {Set,2 , "RString" },
-		"nomatch" : {NoMatch,0 , "all" },
-		"info" : {Info,0 , "all" },
+		"get" : {Get,1 , "RString" ,false},
+		"set" : {Set,2 , "RString" ,true },
+		"nomatch" : {NoMatch,0 , "all" ,false},
+		"info" : {Info,0 , "all" ,false},
+		"rdb" : {Rdb,0 , "all" ,false},
 	}
 	if _,ok := funcs[cmd_type] ;ok {
 		return funcs[cmd_type] ,nil

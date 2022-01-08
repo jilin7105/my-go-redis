@@ -6,6 +6,12 @@
 */
 package rstring
 
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
 type RString struct {
 	Value string
 	Time int
@@ -19,11 +25,11 @@ func InitData() *RString {
 }
 
 
-func  ( r RString) GetDataType () string{
+func  (r RString) GetDataType () string{
 	return r.Type
 }
 
-func ( r RString)  ValueToString() (string) {
+func (r RString)  ValueToString() (string) {
 	return r.Value
 }
 
@@ -37,4 +43,16 @@ func (r RString)  GetType() (int) {
 	return r.Time
 }
 
+func (r RString)  GetRdbStr() string{
+	return fmt.Sprintf("RString;%d,%s",r.Time,r.Value)
+}
+
+func (r *RString)  GetStrFromRdb(s string) {
+	arr := strings.Split(s,",")
+	if len(arr) ==2 {
+		r.Time, _ = strconv.Atoi(arr[0])
+		r.Value= arr[1]
+	}
+
+}
 

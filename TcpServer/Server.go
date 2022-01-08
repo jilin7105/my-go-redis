@@ -58,7 +58,7 @@ func process(conn net.Conn)  {
 		}
 
 		//处理请求指令逻辑
-		res, err := Cmd.CmdAction(str)
+		res, err := Cmd.CmdAction(str,true)
 		if err != nil {
 			log.Println("执行指令异常",err.Error())
 			TcpHelp.Write(err.Error(), conn)

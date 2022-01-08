@@ -13,4 +13,9 @@ type DataBase interface {
 	GetExpires() (int)
 	//返回一个结构体
 	GetDataType() string
+
+	GetRdbStr() string
+
+	GetStrFromRdb(string)
 }
+
