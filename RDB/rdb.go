@@ -36,8 +36,9 @@ func SaveToRdb()  {
  * @Date 5:07 下午 2022/1/8
  **/
 func ReadFromRDb()  {
-	log.Println("rdb")
+	log.Println("rdb 数据恢复开始")
 	FileAction.ReadForFile("rdb",ActionByReaderLine)
+	log.Println("rdb 数据结束开始")
 }
 
 
