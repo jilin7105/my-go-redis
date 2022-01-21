@@ -1,5 +1,5 @@
 /*
-@Time : 2022/1/21 6:34 下午
+@Time : 2022/1/18 4:27 下午
 @Author : yuyunqing
 @File : ziplist
 @Software: GoLand
@@ -12,8 +12,6 @@ import (
 	"log"
 )
 
-
-
 const (
 	INIT_ZLBYTES = 13
 	INIT_ZLTAIL = 0
@@ -25,7 +23,7 @@ const (
 	ZLLEN_LEN  = 4
 )
 
-func test() {
+func a() {
 	pgk :=  CreateZiplist()
 	log.Println(pgk)
 	AppendValue(&pgk,"inter")
@@ -34,10 +32,8 @@ func test() {
 	log.Println(pgk)
 	n := Findvalue(&pgk,"get")
 	log.Println(n)
-	//删除方法有问题
 	DeleteEntry(&pgk,n)
 	log.Println(pgk)
-
 	log.Println(GetAllMembers(&pgk))
 }
 
@@ -164,7 +160,7 @@ func UpdateBasicData(zl *[]byte , zlbytes,zltail,zllen int32) *[]byte {
 	}else{
 
 		tail = zltail+tail
-		if tail ==12 {
+		if tail <12  {
 			tail =0
 		}
 	}
@@ -195,7 +191,7 @@ func UpdateBasicData(zl *[]byte , zlbytes,zltail,zllen int32) *[]byte {
  * @Date 2:38 下午 2022/1/20
  **/
 func DeleteEntry( zl *[]byte ,n int32)  {
-	_ ,c ,_ :=getEntryByIndex(zl , n)
+	p ,c ,_ :=getEntryByIndex(zl , n)
 
 	count_s := GetZipTailLen(zl)
 	//如果是最后一位的话 不更新 下一个节点的  数据
@@ -205,8 +201,8 @@ func DeleteEntry( zl *[]byte ,n int32)  {
 	}else{
 		*zl = append((*zl)[:n] , (*zl)[n+c+8:]...)
 	}
-
-	UpdateBasicData(zl , 0-(c+8) , 0-(c+8)  ,-1 )
+	log.Println(0-(c+8))
+	UpdateBasicData(zl , 0-(c+8) , 0-p  ,-1 )
 }
 
 
