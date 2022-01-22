@@ -191,18 +191,21 @@ func UpdateBasicData(zl *[]byte , zlbytes,zltail,zllen int32) *[]byte {
  * @Date 2:38 下午 2022/1/20
  **/
 func DeleteEntry( zl *[]byte ,n int32)  {
-	p ,c ,_ :=getEntryByIndex(zl , n)
+	p,c ,_ :=getEntryByIndex(zl , n)
 
 	count_s := GetZipTailLen(zl)
 	//如果是最后一位的话 不更新 下一个节点的  数据
+	zltail := -p
 	if count_s != n {
-		*zl = append((*zl)[:n+4] , (*zl)[n+c+4:]...)
 
+		*zl = append((*zl)[:n+4] , (*zl)[n+c+12:]...)
+		zltail = -c-8
 	}else{
 		*zl = append((*zl)[:n] , (*zl)[n+c+8:]...)
+
 	}
-	log.Println(0-(c+8))
-	UpdateBasicData(zl , 0-(c+8) , 0-p  ,-1 )
+	log.Println(zltail)
+	UpdateBasicData(zl , 0-(c+8) , zltail  ,-1 )
 }
 
 
@@ -250,4 +253,4 @@ func LittleEndianEncode(i int32) []byte {
 	//写入
 	binary.Write(pgk, binary.LittleEndian , i)
 	return pgk.Bytes()
-}
+}}
