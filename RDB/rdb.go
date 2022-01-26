@@ -14,7 +14,35 @@ import (
 	"go-redis/MemoryManagement"
 	"log"
 	"strings"
+	"time"
 )
+
+/**
+ * @Author yuyunqing
+ * @Description //TODO Rdb初始化功能
+ * @Date 5:02 下午 2022/1/26
+ **/
+func InitRun()  {
+	ReadFromRDb()
+	CronToRdb()
+
+}
+
+
+/**
+ * @Author yuyunqing
+ * @Description //TODO 实现一个定时写入rdb功能
+ * @Date 4:58 下午 2022/1/26
+ **/
+func CronToRdb()  {
+	go func() {
+		for true {
+			time.Sleep(5 * time.Minute)
+			SaveToRdb()
+		}
+	}()
+
+}
 
 /**
  * @Author yuyunqing
@@ -23,10 +51,12 @@ import (
  **/
 func SaveToRdb()  {
 	BIM := MemoryManagement.GetMainInfo()
+	FileAction.Clear("rdb")
 	for key, v := range BIM.P {
 		str := fmt.Sprintf("%s;%s",key,v.GetRdbStr())
 		FileAction.SaveToFile(str,"rdb")
 	}
+	log.Println("Rdb执行")
 }
 
 

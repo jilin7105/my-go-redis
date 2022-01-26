@@ -32,10 +32,15 @@ func GetMainFileInfo() *FileConn {
 	return Fc
 }
 
+/**
+ * @Author yuyunqing
+ * @Description //TODO 初始化文件并写入句柄
+ * @Date 5:17 下午 2022/1/26
+ **/
 func (fc *FileConn)Init()  {
 	var filelist = map[string]string{
-		"aof": "./aof.log",
-		"rdb": "./rdb.log",
+		"aof": "./logs/aof.log",
+		"rdb": "./logs/rdb.log",
 	}
 	var f *os.File
 	var err error
@@ -61,14 +66,22 @@ func (fc *FileConn)Init()  {
 
 }
 
-
+/**
+ * @Author yuyunqing
+ * @Description //TODO 调用初始化文件
+ * @Date 5:17 下午 2022/1/26
+ **/
 func InitFile() string {
 	GetMainFileInfo()
 	//获取基础信息
 	return commonSTR.INIT_FILE_SERUCCESS
 }
 
-
+/**
+ * @Author yuyunqing
+ * @Description //TODO 向文件写入数据
+ * @Date 5:18 下午 2022/1/26
+ **/
 func SaveToFile(s,type_s string)  {
 
 	fc := GetMainFileInfo()
@@ -83,6 +96,12 @@ func SaveToFile(s,type_s string)  {
 
 }
 
+
+/**
+ * @Author yuyunqing
+ * @Description //TODO 从文件读取数据
+ * @Date 5:18 下午 2022/1/26
+ **/
 func ReadForFile(types string , callback func(s string))  {
 	f_l := GetMainFileInfo()
 
@@ -97,7 +116,6 @@ func ReadForFile(types string , callback func(s string))  {
 		line = strings.TrimSpace(line)
 
 		if err != nil {
-			log.Println(err.Error())
 			return
 		}
 		if len(line) >0 {
@@ -108,7 +126,25 @@ func ReadForFile(types string , callback func(s string))  {
 
 }
 
+/**
+ * @Author yuyunqing
+ * @Description //TODO	清空文件内容
+ * @Date 5:26 下午 2022/1/26
+ **/
+func Clear(types string)  {
+	f_l := GetMainFileInfo()
 
+	if _,ok :=f_l.Filelist[types] ;!ok {
+		f_l.Init()
+	}
+	f_l.Filelist[types].Truncate(0)
+}
+
+/**
+ * @Author yuyunqing
+ * @Description //TODO 检查文件是否存在
+ * @Date 5:19 下午 2022/1/26
+ **/
 func checkFileIsExist(filename string) bool {
 	var exist = true
 	if _, err := os.Stat(filename); os.IsNotExist(err) {

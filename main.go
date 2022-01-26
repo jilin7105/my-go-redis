@@ -18,7 +18,8 @@ func init()  {
 	FileAction.InitFile()
 	//aof 从aof中初始化数据
 	//AOF.ReaderByFile()
-	RDB.ReadFromRDb()
+	RDB.InitRun()
+
 }
 
 func main()  {

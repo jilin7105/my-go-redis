@@ -19,10 +19,8 @@ const (
 
 /*
 	整体逻辑 Quicklist 是一个节点为 ziplist 的双向链表
-
 	每个节点的ziplist的最大值为 2k ,
 	压入数据时，每超过ziplist 的最大值， 生成新的节点 node
-
 	数据查找和数据 append  push  都是基于  双向链表和 ziplist 实现
  */
 
