@@ -7,6 +7,7 @@
 package main
 
 import (
+	"go-redis/AOF"
 	"go-redis/FileAction"
 	"go-redis/MemoryManagement"
 	"go-redis/RDB"
@@ -16,9 +17,11 @@ import (
 func init()  {
 	MemoryManagement.InitData()
 	FileAction.InitFile()
-	//aof 从aof中初始化数据
-	//AOF.ReaderByFile()
+
+
+	//rdb 和aof 共治模式 ，rdb操作成功后，同时清除aof缓存
 	RDB.InitRun()
+	AOF.ReaderByFile()
 
 }
 

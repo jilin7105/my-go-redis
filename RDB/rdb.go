@@ -56,6 +56,8 @@ func SaveToRdb()  {
 		str := fmt.Sprintf("%s;%s",key,v.GetRdbStr())
 		FileAction.SaveToFile(str,"rdb")
 	}
+
+	FileAction.Clear("aof")
 	log.Println("Rdb执行")
 }
 
