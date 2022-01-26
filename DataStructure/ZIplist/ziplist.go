@@ -23,19 +23,29 @@ const (
 	ZLLEN_LEN  = 4
 )
 
-func a() {
-	pgk :=  CreateZiplist()
-	log.Println(pgk)
-	AppendValue(&pgk,"inter")
-	log.Println(pgk)
-	AppendValue(&pgk,"get")
-	log.Println(pgk)
-	n := Findvalue(&pgk,"get")
-	log.Println(n)
-	DeleteEntry(&pgk,n)
-	log.Println(pgk)
-	log.Println(GetAllMembers(&pgk))
-}
+//func main() {
+//	pgk :=  CreateZiplist()
+//	log.Println(pgk)
+//	AppendValue(&pgk,"inter")
+//	log.Println(pgk)
+//	AppendValue(&pgk,"get")
+//	log.Println(pgk)
+//	PushEntry(&pgk,"push")
+//	n := Findvalue(&pgk,"get")
+//	log.Println(n)
+//	DeleteEntry(&pgk,n)
+//
+//	n = Findvalue(&pgk,"inter")
+//	log.Println(n)
+//	DeleteEntry(&pgk,n)
+//	log.Println(pgk)
+//	AppendValue(&pgk,"get")
+//	log.Println(pgk)
+//
+//	PushEntry(&pgk,"push1")
+//	log.Println(pgk)
+//	log.Println(GetAllMembers(&pgk))
+//}
 
 func CreateZiplist() []byte {
 	pgk := new(bytes.Buffer)
@@ -73,7 +83,7 @@ func GetZipCountLen(zl *[]byte) int32{
  **/
 func AppendValue(zl *[]byte, s string) *[]byte {
 	//获取前一个元素长度
-	_ ,c , _:= getEntryByIndex(zl, GetZipTailLen(zl) )
+	_ ,c , _:= GetEntryByIndex(zl, GetZipTailLen(zl) )
 	all_len := GetZipAllLen(zl)
 	data := []byte(s)
 	encoding := int32(len(data))
@@ -101,7 +111,7 @@ func Findvalue(zl *[]byte , string2 string ) int32 {
 	start := GetZipTailLen(zl)
 	for i := int32(1) ; i <= count ; i++ {
 
-		p ,c ,e :=getEntryByIndex(zl , start)
+		p ,c ,e :=GetEntryByIndex(zl , start)
 		if c == int32(len(fk))  &&  string(e) ==string(fk)   {
 			return start
 		}
@@ -118,11 +128,11 @@ func Findvalue(zl *[]byte , string2 string ) int32 {
 func GetAllMembers(zl *[]byte) (res []string) {
 	res = []string{}
 	count := GetZipCountLen(zl)
-	start := GetZipTailLen(zl)
+	start := int32(12)
 	for i := int32(1) ; i <= count ; i++ {
-		p ,_ ,e :=getEntryByIndex(zl , start)
+		_ ,c ,e :=GetEntryByIndex(zl , start)
 		res = append(res , string(e))
-		start = start-p
+		start = start+ c+8
 	}
 	return
 }
@@ -133,7 +143,7 @@ func GetAllMembers(zl *[]byte) (res []string) {
  * @Description //TODO 根据指针下标获取当前 节点的长度
  * @Date 11:27 上午 2022/1/20
  **/
-func getEntryByIndex(zl *[]byte, n int32) (int32 , int32 ,[]byte) {
+func GetEntryByIndex(zl *[]byte, n int32) (int32 , int32 ,[]byte) {
 	if n == 0 {
 		return 0 ,0 , []byte{}
 	}else {
@@ -191,7 +201,7 @@ func UpdateBasicData(zl *[]byte , zlbytes,zltail,zllen int32) *[]byte {
  * @Date 2:38 下午 2022/1/20
  **/
 func DeleteEntry( zl *[]byte ,n int32)  {
-	p,c ,_ :=getEntryByIndex(zl , n)
+	p,c ,_ :=GetEntryByIndex(zl , n)
 
 	count_s := GetZipTailLen(zl)
 	//如果是最后一位的话 不更新 下一个节点的  数据
@@ -204,10 +214,36 @@ func DeleteEntry( zl *[]byte ,n int32)  {
 		*zl = append((*zl)[:n] , (*zl)[n+c+8:]...)
 
 	}
-	log.Println(zltail)
+
 	UpdateBasicData(zl , 0-(c+8) , zltail  ,-1 )
 }
 
+
+/**
+ * @Author yuyunqing
+ * @Description //TODO 删除节点
+ * @Date 2:38 下午 2022/1/20
+ **/
+func PushEntry( zl *[]byte ,msg string)  {
+	count := GetZipCountLen(zl)
+	if count == 0 {
+		AppendValue(zl,msg)
+		return
+	}
+	data := []byte(msg)
+	encoding := int32(len(data))
+	p_af := int32(0)
+	entry := CreateEntry(p_af,encoding,data)
+	len_entry := LittleEndianEncode(encoding+8)
+	for i := 0; i < 4; i++ {
+		(*zl) [12 +i] =  len_entry[i]
+	}
+
+	*zl = append((*zl)[:12] , append(entry, (*zl)[12:]...)... )
+
+	//改变基础属性
+	UpdateBasicData(zl , encoding + 8 , encoding+8 ,1 )
+}
 
 
 
@@ -253,4 +289,4 @@ func LittleEndianEncode(i int32) []byte {
 	//写入
 	binary.Write(pgk, binary.LittleEndian , i)
 	return pgk.Bytes()
-}}
+}
